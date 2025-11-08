@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Health Desk | Home</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Inline extra styles for the chatbot box */
+    .chatbot-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 350px;
+      background: #ffffff;
+      border: 2px solid #007BFF;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      z-index: 1000;
+    }
+
+    .chatbot-header {
+      background: #007BFF;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      font-weight: bold;
+    }
+
+    .chatbot-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      font-size: 14px;
+      height: 300px;
+    }
+
+    .chatbot-input {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    .chatbot-input input {
+      flex: 1;
+      border: none;
+      padding: 10px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .chatbot-input button {
+      background: #007BFF;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .chatbot-input button:hover {
+      background: #0056b3;
+    }
+
+    .chat-message {
+      margin: 8px 0;
+    }
+
+    .user-msg {
+      text-align: right;
+      color: #333;
+    }
+
+    .ai-msg {
+      text-align: left;
+      color: #007BFF;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h2 class="logo">AI Health Desk</h2>
+  <nav>
+    <a href="index.html" class="active">Home</a>
+    <a href="features.html">Features</a>
+    <a href="register.html">Register</a>
+    <a href="triage.html">Triage</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="hospital.html">Hospitals</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<section class="hero simple-bg">
+  <div class="overlay">
+    <div class="hero-text">
+      <h1>Smart Health Desk for Government & NGO Clinics</h1>
+      <p>
+        Our multi-agent AI health assistant bridges healthcare gaps by automating patient registration,
+        triage, and follow-ups. It empowers under-resourced clinics with real-time decision support and
+        predictive analytics for early risk detection.
+      </p>
+      <div class="cta-buttons">
+        <a href="features.html">Explore Features</a>
+        <a href="register.html">Register Patient</a>
+      </div>
+    </div>
+    <div>
+      <img src="https://cdn.sanity.io/images/0mnqm898/production/d099eb109102c89f32e73b01bde533ec66ed421a-2240x1260.png"
+           style="max-width: 2240px; height: 171px; margin: 0px; width: 304px;"
+           alt="AI Agents Transforming Healthcare 2025">
+    </div>
+  </div>
+</section>
+
+<section class="info">
+  <h2>Why AI Health Desk?</h2>
+  <p>
+    Designed for real-world clinics, the AI Health Desk improves service delivery, reduces waiting times,
+    and ensures equitable care by combining automation, multilingual assistance, and secure data handling.
+  </p>
+</section>
+
+<!-- 💬 AI Chat Assistant -->
+<div class="chatbot-container">
+  <div class="chatbot-header">🤖 Swasthya AI Assistant</div>
+  <div id="chatbox" class="chatbot-messages"></div>
+  <div class="chatbot-input">
+    <input type="text" id="userInput" placeholder="Describe your condition or ask about hospitals..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 AI Health Desk | Govt–NGO Clinic Initiative | Prototype UI</p>
+</footer>
+
+<script>
+  async function sendMessage() {
+    const inputBox = document.getElementById("userInput");
+    const chatbox = document.getElementById("chatbox");
+    const userText = inputBox.value.trim();
+    if (userText === "") return;
+
+    // Display user message
+    chatbox.innerHTML += `<div class='chat-message user-msg'><b>You:</b> ${userText}</div>`;
+    inputBox.value = "";
+
+    // Send to backend AI
+    try {
+      const res = await fetch("http://localhost:5000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userText })
+      });
+      const data = await res.json();
+      chatbox.innerHTML += `<div class='chat-message ai-msg'><b>AI:</b> ${data.reply}</div>`;
+    } catch (err) {
+      chatbox.innerHTML += `<div class='chat-message ai-msg'><b>AI:</b> Sorry, the AI service is offline.</div>`;
+    }
+
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }
+</script>
+</body>
+</html>

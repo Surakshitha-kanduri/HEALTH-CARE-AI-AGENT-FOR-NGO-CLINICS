@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register Patient | AI Health Desk</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body style="background: url('https://media.istockphoto.com/id/1344935909/vector/man-at-the-reception-desk-in-the-interior-of-the-hospital-vector-flat-style-cartoon.jpg?s=612x612&w=0&k=20&c=dkrDBvMN9FSCRpty0qNw0yUE99TaLS52zt3aX-WK6cw=') no-repeat center center fixed; background-size: cover; color: #000; font-weight: bold;">
+
+<header>
+  <h2 class="logo">AI Health Desk</h2>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="features.html">Features</a>
+    <a href="register.html" class="active">Register</a>
+    <a href="triage.html">Triage</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="hospital.html">Hospitals</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<section>
+  <h2>Patient Registration</h2>
+  <form id="registerForm">
+    <label>Full Name</label>
+    <input type="text" id="name" required>
+    <label>Age</label>
+    <input type="number" id="age" required>
+    <label>Phone</label>
+    <input type="tel" id="phone" required>
+    <label>Address</label>
+    <textarea id="address" rows="3"></textarea>
+    <button type="submit" class="btn">Register</button>
+  </form>
+  <p id="status"></p>
+</section>
+
+<footer><p>© 2025 AI Health Desk | Govt–NGO Clinic Initiative</p></footer>
+
+<script>
+const regForm = document.getElementById("registerForm");
+
+regForm.addEventListener("submit", async (e) => {
+  e.preventDefault(); // prevent reload
+
+  const data = {
+    name: document.getElementById("name").value,
+    age: document.getElementById("age").value,
+    phone: document.getElementById("phone").value,
+    address: document.getElementById("address").value
+  };
+
+  try {
+    const res = await fetch("http://localhost:5000/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+    alert(result.message); // Shows "Patient registered successfully!"
+    regForm.reset(); // Clear form
+  } catch (err) {
+    alert("Error connecting to backend.");
+    console.error(err);
+  }
+});
+</script>
+</body>
+</html>

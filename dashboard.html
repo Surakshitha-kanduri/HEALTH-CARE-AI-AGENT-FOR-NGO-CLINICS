@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | AI Health Desk</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h2 class="logo">AI Health Desk</h2>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="features.html">Features</a>
+    <a href="register.html">Register</a>
+    <a href="triage.html">Triage</a>
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="hospital.html">Hospitals</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<section>
+  <h2>Clinic Dashboard</h2>
+
+<div class="stats">
+  <div class="stat">
+    <h4>Total Patients</h4>
+    <p id="pToday">0</p>
+  </div>
+  <div class="stat">
+    <h4>High-Risk Cases</h4>
+    <p id="pRisk">0</p>
+  </div>
+</div>
+
+<h3>Recent Registrations</h3>
+<ul id="patientList"></ul>
+
+<h3>Recent Triage Records</h3>
+<ul id="triageList"></ul>
+
+</section>
+
+<footer><p>© 2025 AI Health Desk | Govt–NGO Clinic Initiative</p></footer>
+<script src="script.js"></script>
+<script>
+async function fetchDashboard() {
+  try {
+    // --- Fetch Patients ---
+    const patientsRes = await fetch("http://localhost:5000/patients");
+    const patients = await patientsRes.json();
+    document.getElementById("pToday").innerText = patients.length;
+
+    const patientList = document.getElementById("patientList");
+    patientList.innerHTML = "";
+    patients.slice(0, 5).forEach(p => {
+      const li = document.createElement("li");
+      li.innerText = `${p.name}, Age: ${p.age}, Phone: ${p.phone}`;
+      patientList.appendChild(li);
+    });
+
+    // --- Fetch Triages ---
+    const triageRes = await fetch("http://localhost:5000/triages");
+    const triages = await triageRes.json();
+
+    const highRisk = triages.filter(t => t.severity >= 7 || t.redflag === "1").length;
+    document.getElementById("pRisk").innerText = highRisk;
+
+    const triageList = document.getElementById("triageList");
+    triageList.innerHTML = "";
+    triages.slice(0, 5).forEach(t => {
+      const li = document.createElement("li");
+      li.innerText = `${t.symptom} - Severity: ${t.severity}, Red-Flag: ${t.redflag === "1" ? "Yes" : "No"}`;
+      triageList.appendChild(li);
+    });
+
+  } catch (err) {
+    console.error("Error fetching dashboard data", err);
+  }
+}
+
+// Fetch dashboard data on page load
+fetchDashboard();
+</script>
+
+</body>
+</html>
